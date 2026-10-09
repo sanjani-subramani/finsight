@@ -1,0 +1,36 @@
+.resolve-modal__overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-overlay);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.resolve-modal {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  padding: var(--sp-8);
+  width: min(480px, 90vw);
+  box-shadow: var(--shadow-lg);
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.resolve-modal h3 {
+  margin-bottom: var(--sp-4);
+}
+
+.resolve-modal textarea {
+  min-height: 100px;
+  margin-bottom: var(--sp-4);
+  resize: vertical;
+}
+
+.resolve-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sp-3);
+}

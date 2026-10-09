@@ -1,0 +1,48 @@
+.recon-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.recon-status-badge--matched {
+  background: var(--color-success-dim);
+  color: var(--color-success);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.15);
+}
+
+.recon-status-badge--missing_in_bank,
+.recon-status-badge--missing_in_gateway,
+.recon-status-badge--missing_in_internal {
+  background: var(--color-warning-dim);
+  color: var(--color-warning);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.15);
+}
+
+.recon-status-badge--duplicate,
+.recon-status-badge--amount_mismatch {
+  background: var(--color-critical-dim);
+  color: var(--color-critical);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.2);
+}
+
+.recon-status-badge--timing_difference {
+  background: var(--color-info-dim);
+  color: var(--color-info);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.15);
+}
+
+.recon-status-badge--unresolved {
+  background: rgba(148, 163, 184, 0.1);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-default);
+}

@@ -1,0 +1,22 @@
+.provider-alert-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  background: var(--color-warning-dim);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-3) var(--sp-5);
+  margin-bottom: var(--sp-3);
+  color: #fcd34d;
+  font-size: 0.875rem;
+  animation: fadeInUp 0.4s ease-out both;
+}
+
+.provider-alert-banner__icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.provider-alert-banner strong {
+  color: #fde68a;
+}

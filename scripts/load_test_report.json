@@ -1,0 +1,181 @@
+{
+  "generated_at": "2026-09-14T12:25:31.786900+00:00",
+  "base_url": "http://127.0.0.1:8000",
+  "scenarios": [
+    {
+      "name": "A_sms_ingestion_burst",
+      "description": "5 concurrent users x 5 SMS each over 15.0s. Latency = time from POST /ingest/sms to the pipeline reaching a terminal stage (intervention landed or the chain concluded without one).",
+      "latencies_ms": {
+        "p50": 561.2092999945162,
+        "p95": 30481.84697999677,
+        "p99": 30482.28124400135,
+        "min": 556.7966000089655,
+        "max": 30482.399300002726,
+        "mean": 12492.805155999959,
+        "count": 25
+      },
+      "extra": {},
+      "errors": 0
+    },
+    {
+      "name": "B_simulation_heavy_load",
+      "description": "10 concurrent users x 3 GET /simulation/run each. external_latency_ms is wall-clock HTTP round trip; internal_duration_ms is the SAME window's SimulationRun.duration_ms rows read straight from Postgres -- the engine's own compute time, isolated from network and queueing. A slow external p95 with a fast internal p95 means fix the queueing/network path; a slow internal p95 means fix the engine itself. Conflating the two leads to optimizing the wrong thing.",
+      "latencies_ms": {
+        "p50": 44.275850006670225,
+        "p95": 2853.6043699983557,
+        "p99": 3227.4089609955267,
+        "min": 19.569900003261864,
+        "max": 3319.138599996222,
+        "mean": 722.7596566672825,
+        "count": 30
+      },
+      "extra": {
+        "internal_duration_ms": {
+          "p50": 3.5,
+          "p95": 5.0,
+          "p99": 5.0,
+          "min": 3.0,
+          "max": 5.0,
+          "mean": 3.8,
+          "count": 10
+        }
+      },
+      "errors": 0
+    },
+    {
+      "name": "C_consumer_lag_under_sustained_publish",
+      "description": "Published at ~2.0/s for 30.0s, sampling stream XLEN AND XPENDING every 5.0s. XLEN always grows with publish volume (EventBus.ack() never trims the stream) so it is context, not a lag signal. pending_head_avg/pending_tail_avg (first vs last fifth of samples) close to 1.0 means lag stayed flat; well above 1.0 means the consumer is falling behind.",
+      "latencies_ms": {},
+      "extra": {
+        "samples": [
+          {
+            "t_seconds": 0.0,
+            "financial_event": 105,
+            "financial_event_pending": 0,
+            "state.changed": 105,
+            "state.changed_pending": 0,
+            "snapshot.updated": 104,
+            "snapshot.updated_pending": 0,
+            "risk.assessed": 100,
+            "risk.assessed_pending": 0,
+            "intervention.created": 0,
+            "intervention.created_pending": 0,
+            "threat_event": 0,
+            "threat_event_pending": 0,
+            "dead_letter": 0,
+            "dead_letter_pending": 0
+          },
+          {
+            "t_seconds": 5.0,
+            "financial_event": 110,
+            "financial_event_pending": 0,
+            "state.changed": 110,
+            "state.changed_pending": 0,
+            "snapshot.updated": 109,
+            "snapshot.updated_pending": 0,
+            "risk.assessed": 105,
+            "risk.assessed_pending": 0,
+            "intervention.created": 0,
+            "intervention.created_pending": 0,
+            "threat_event": 0,
+            "threat_event_pending": 0,
+            "dead_letter": 0,
+            "dead_letter_pending": 0
+          },
+          {
+            "t_seconds": 10.1,
+            "financial_event": 115,
+            "financial_event_pending": 0,
+            "state.changed": 115,
+            "state.changed_pending": 0,
+            "snapshot.updated": 114,
+            "snapshot.updated_pending": 0,
+            "risk.assessed": 110,
+            "risk.assessed_pending": 0,
+            "intervention.created": 0,
+            "intervention.created_pending": 0,
+            "threat_event": 0,
+            "threat_event_pending": 0,
+            "dead_letter": 0,
+            "dead_letter_pending": 0
+          },
+          {
+            "t_seconds": 15.1,
+            "financial_event": 120,
+            "financial_event_pending": 0,
+            "state.changed": 120,
+            "state.changed_pending": 0,
+            "snapshot.updated": 119,
+            "snapshot.updated_pending": 0,
+            "risk.assessed": 115,
+            "risk.assessed_pending": 0,
+            "intervention.created": 0,
+            "intervention.created_pending": 0,
+            "threat_event": 0,
+            "threat_event_pending": 0,
+            "dead_letter": 0,
+            "dead_letter_pending": 0
+          },
+          {
+            "t_seconds": 20.1,
+            "financial_event": 125,
+            "financial_event_pending": 0,
+            "state.changed": 125,
+            "state.changed_pending": 0,
+            "snapshot.updated": 124,
+            "snapshot.updated_pending": 0,
+            "risk.assessed": 120,
+            "risk.assessed_pending": 0,
+            "intervention.created": 0,
+            "intervention.created_pending": 0,
+            "threat_event": 0,
+            "threat_event_pending": 0,
+            "dead_letter": 0,
+            "dead_letter_pending": 0
+          },
+          {
+            "t_seconds": 25.1,
+            "financial_event": 130,
+            "financial_event_pending": 0,
+            "state.changed": 130,
+            "state.changed_pending": 0,
+            "snapshot.updated": 129,
+            "snapshot.updated_pending": 0,
+            "risk.assessed": 125,
+            "risk.assessed_pending": 0,
+            "intervention.created": 0,
+            "intervention.created_pending": 0,
+            "threat_event": 0,
+            "threat_event_pending": 0,
+            "dead_letter": 0,
+            "dead_letter_pending": 0
+          },
+          {
+            "t_seconds": 30.1,
+            "financial_event": 135,
+            "financial_event_pending": 0,
+            "state.changed": 135,
+            "state.changed_pending": 0,
+            "snapshot.updated": 134,
+            "snapshot.updated_pending": 1,
+            "risk.assessed": 129,
+            "risk.assessed_pending": 0,
+            "intervention.created": 0,
+            "intervention.created_pending": 0,
+            "threat_event": 0,
+            "threat_event_pending": 0,
+            "dead_letter": 0,
+            "dead_letter_pending": 0
+          }
+        ],
+        "financial_event_stream_head_avg": 105.0,
+        "financial_event_stream_tail_avg": 135.0,
+        "lag_ratio_tail_over_head": 1.2857142857142858,
+        "financial_event_pending_head_avg": 0.0,
+        "financial_event_pending_tail_avg": 0.0,
+        "pending_lag_ratio_tail_over_head": null
+      },
+      "errors": 0
+    }
+  ]
+}

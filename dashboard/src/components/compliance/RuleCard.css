@@ -1,0 +1,114 @@
+.rule-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-5) var(--sp-6);
+  margin-bottom: var(--sp-4);
+  transition: all var(--transition-base);
+  animation: fadeInUp 0.4s ease-out both;
+}
+
+.rule-card:hover {
+  border-color: rgba(148, 163, 184, 0.25);
+  box-shadow: var(--shadow-md);
+}
+
+.rule-card--caution {
+  border-left: 4px solid var(--color-warning);
+}
+
+.rule-card--clean {
+  border-left: 4px solid var(--color-success);
+}
+
+.rule-card__summary {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+  margin-bottom: var(--sp-3);
+}
+
+.rule-card__fields {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: var(--sp-2) var(--sp-4);
+  margin-bottom: var(--sp-4);
+  font-size: 0.8125rem;
+}
+
+.rule-card__fields dt {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.rule-card__fields dd {
+  color: var(--text-secondary);
+}
+
+.rule-card__ambiguities {
+  margin-top: var(--sp-3);
+  margin-bottom: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--color-warning-dim);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: var(--radius-md);
+  color: #fde68a;
+  font-size: 0.8125rem;
+}
+
+.rule-card__ambiguities ul {
+  margin-top: var(--sp-2);
+  padding-left: var(--sp-4);
+}
+
+.rule-card__actions {
+  display: flex;
+  gap: var(--sp-3);
+  margin-top: var(--sp-4);
+}
+
+.rule-card__actions button:first-child {
+  background: var(--accent-gradient);
+  border: none;
+  color: #ffffff;
+}
+
+.rule-card__actions button:last-child {
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
+}
+
+.rule-card__actions button:last-child:hover {
+  border-color: var(--color-critical);
+  color: var(--color-critical);
+}
+
+.rule-card__reject-form {
+  margin-top: var(--sp-4);
+  padding: var(--sp-4);
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+}
+
+.rule-card__reject-form textarea {
+  width: 100%;
+  padding: var(--sp-3);
+  background: var(--bg-input);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+}
+
+.rule-card__reject-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sp-3);
+  margin-top: var(--sp-3);
+}

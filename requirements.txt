@@ -1,0 +1,40 @@
+fastapi==0.115.0
+uvicorn[standard]==0.31.0
+pydantic==2.9.2
+pydantic-settings==2.5.2
+email-validator==2.2.0
+sqlalchemy==2.0.35
+asyncpg==0.29.0
+alembic==1.13.3
+greenlet==3.1.1
+redis==5.1.1
+arq==0.26.1
+argon2-cffi==23.1.0
+pyjwt==2.9.0
+python-multipart==0.0.12
+numpy==2.1.2
+pandas==2.2.3
+scipy==1.14.1
+networkx==3.4
+rapidfuzz==3.10.0
+python-dateutil==2.9.0.post0
+structlog==24.4.0
+prometheus-client==0.21.0
+pytest==8.3.3
+pytest-asyncio==0.24.0
+hypothesis==6.112.4
+httpx==0.27.2
+ruff==0.6.9
+mypy==1.11.2
+types-python-dateutil==2.9.0.20260807
+
+# Test-only: the real target database is Postgres (see docker-compose.yml).
+# aiosqlite backs an in-memory DB for tests so the suite can run without a
+# live Postgres instance; production code never imports it.
+aiosqlite==0.20.0
+
+# Test-only: the real target is Redis (Streams + arq). fakeredis backs an
+# in-memory Redis (with Streams/consumer-group support) for tests so the
+# suite can run without a live Redis instance; production code never
+# imports it.
+fakeredis==2.38.0
