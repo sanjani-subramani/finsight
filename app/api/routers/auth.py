@@ -122,20 +122,31 @@ async def register(
         trace_id=_trace_id(request),
     )
 
-    # Ensure registered user has an organization with owner role so they can immediately use the dashboard
-    org_result = await session.execute(select(Organization).limit(1))
-    default_org = org_result.scalar_one_or_none()
-    if not default_org:
-        default_org = Organization(
-            name=f"{user.display_name or 'Default'} Org",
-            slug=f"org-{str(user.id)[:8]}",
-        )
-        session.add(default_org)
-        await session.flush()
+    # Give the registering user their OWN organization, with owner role, so they
+    # can immediately use the dashboard.
+    #
+    # SECURITY: this org MUST be created fresh for this user. A previous version
+    # looked up `select(Organization).limit(1)` -- an unscoped query that returns
+    # whichever org happens to be first in the table -- and granted the new user
+    # `owner` on it. That is a cross-tenant privilege escalation: every account
+    # created after the first one silently gained owner access to another
+    # tenant's payment, reconciliation, dependency-graph and compliance data.
+    # RBAC could not catch it, because RBAC checks what a role permits and
+    # assumes the role itself was assigned to the right tenant.
+    #
+    # The slug uses the full user UUID, not a truncated prefix: `slug` is
+    # UNIQUE, and an 8-hex-char prefix is only 32 bits, which collides with
+    # ~50% probability around 77k users and would fail the registration.
+    own_org = Organization(
+        name=f"{user.display_name or 'Default'} Org",
+        slug=f"org-{user.id.hex}",
+    )
+    session.add(own_org)
+    await session.flush()
 
     membership = OrgMembership(
         user_id=user.id,
-        org_id=default_org.id,
+        org_id=own_org.id,
         role="owner",
     )
     session.add(membership)

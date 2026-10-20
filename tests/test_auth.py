@@ -224,13 +224,63 @@ async def test_my_orgs_lists_every_org_the_user_belongs_to(client: AsyncClient, 
     resp = await client.get("/auth/my-orgs", headers=headers)
     assert resp.status_code == 200
     by_slug = {row["org_slug"]: row["role"] for row in resp.json()}
-    assert by_slug == {"acme-payments": "owner", "beta-bank": "viewer"}
+
+    # Registration also creates the user's own org, so expect it alongside the
+    # two memberships added above.
+    assert by_slug[f"org-{user.id.hex}"] == "owner"
+    assert by_slug["acme-payments"] == "owner"
+    assert by_slug["beta-bank"] == "viewer"
+    assert len(by_slug) == 3
 
 
-async def test_my_orgs_empty_for_a_user_in_no_org(client: AsyncClient) -> None:
+async def test_my_orgs_returns_only_the_users_own_org_after_registration(
+    client: AsyncClient,
+) -> None:
     tokens = await _register_and_login(client, email="user6@example.com")
     headers = {"Authorization": f"Bearer {tokens['access_token']}"}
 
     resp = await client.get("/auth/my-orgs", headers=headers)
     assert resp.status_code == 200
-    assert resp.json() == []
+
+    rows = resp.json()
+    assert len(rows) == 1
+    assert rows[0]["role"] == "owner"
+
+
+async def test_registration_never_joins_another_users_existing_org(
+    client: AsyncClient,
+) -> None:
+    """Regression test for a cross-tenant privilege escalation.
+
+    Registration used to attach every new user as `owner` of whichever
+    organization was first in the table (an unscoped
+    `select(Organization).limit(1)`). The second user to ever sign up gained
+    owner access to the first user's org -- and therefore to another tenant's
+    payment, reconciliation, dependency-graph and compliance data.
+
+    Each registrant must get their own, separate organization.
+    """
+    alice = await _register_and_login(client, email="alice@acme-example.com")
+    bob = await _register_and_login(client, email="bob@rival-example.com")
+
+    alice_orgs = (
+        await client.get(
+            "/auth/my-orgs",
+            headers={"Authorization": f"Bearer {alice['access_token']}"},
+        )
+    ).json()
+    bob_orgs = (
+        await client.get(
+            "/auth/my-orgs",
+            headers={"Authorization": f"Bearer {bob['access_token']}"},
+        )
+    ).json()
+
+    alice_org_ids = {row["org_id"] for row in alice_orgs}
+    bob_org_ids = {row["org_id"] for row in bob_orgs}
+
+    assert alice_org_ids, "alice should own an org"
+    assert bob_org_ids, "bob should own an org"
+    assert not (alice_org_ids & bob_org_ids), (
+        "cross-tenant breach: bob was granted access to alice's organization"
+    )
