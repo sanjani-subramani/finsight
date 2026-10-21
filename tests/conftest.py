@@ -21,6 +21,8 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.pool import StaticPool
 
+import fakeredis.aioredis
+
 from app.main import app
 from app.models.tables import Base
 from app.platform.database import get_session
@@ -78,6 +80,18 @@ async def client(session_factory) -> AsyncGenerator[AsyncClient, None]:
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         yield ac
     app.dependency_overrides.clear()
+
+
+@pytest_asyncio.fixture(autouse=True)
+async def _fake_redis(monkeypatch):
+    """Replace the real Redis client with fakeredis for every test so
+    endpoints that touch Redis (admin, reports) work without a live server."""
+    fake = fakeredis.aioredis.FakeRedis(decode_responses=True)
+    import app.platform.eventbus as _eb
+
+    monkeypatch.setattr(_eb, "_default_redis_client", fake)
+    yield fake
+    await fake.aclose()
 
 
 @pytest_asyncio.fixture
