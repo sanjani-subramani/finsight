@@ -1,9 +1,23 @@
-import 'dart:io';
-
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
+
+// Conditional import: the Dart compiler picks exactly ONE of these
+// files depending on which platform libraries are available.
+//
+// • dart.library.io        → native (Android / iOS / desktop)
+//   Uses NativeDatabase backed by dart:ffi — fast, file-backed SQLite.
+//
+// • dart.library.js_interop → web (Chrome / Edge)
+//   Uses WasmDatabase — SQLite compiled to WebAssembly, stored in
+//   IndexedDB.  Needs sqlite3.wasm + drift_worker.js served from the
+//   web root (generate with `dart run drift_dev make_web`).
+//
+// • fallback               → unsupported platform (throws)
+//
+// This pattern is the standard Dart way to avoid importing dart:ffi on
+// web (which would fail at compile time).
+import 'open_connection_unsupported.dart'
+    if (dart.library.io) 'open_connection_native.dart'
+    if (dart.library.js_interop) 'open_connection_web.dart';
 
 part 'app_database.g.dart';
 
@@ -53,16 +67,8 @@ class Outbox extends Table {
 
 @DriftDatabase(tables: [CachedSnapshots, Outbox])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
+  AppDatabase([QueryExecutor? executor]) : super(executor ?? openConnection());
 
   @override
   int get schemaVersion => 1;
-
-  static QueryExecutor _openConnection() {
-    return LazyDatabase(() async {
-      final dir = await getApplicationDocumentsDirectory();
-      final file = File(p.join(dir.path, 'finsentinel.sqlite'));
-      return NativeDatabase.createInBackground(file);
-    });
-  }
 }
